@@ -1,0 +1,62 @@
+#!/bin/bash
+
+
+
+##### Variables
+
+NAME=$1
+TYPE=$2
+ROUT=""
+
+VONE=$3
+VTWO=$4
+VTHR=$5
+
+
+
+##### Functions
+
+genFiles() {
+	echo "Generating files"
+
+	cd ~/Projects
+	mkdir $NAME
+	cd $NAME
+
+
+
+	if [ "$VONE" = "f" ] || [ "$VTWO" = "f" ] || [ "$VTHR" = "f" ]; then
+		mkdir bin
+		mkdir src
+		cd src
+	fi
+
+	if [ "$VONE" = "m" ] || [ "$VTWO" = "m" ] || [ "$VTHR" = "m" ]; then
+
+		ROUT="Main.$TYPE"
+	else
+		ROUT="$NAME.$TYPE"
+	fi
+
+	touch $ROUT
+
+	if [ "$VONE" = "p" ] || [ "$VTWO" = "p" ] || [ "$VTHR" = "p" ]; then
+		cd ~/Projects
+		subl $NAME
+	else
+		cd ~/Projects/$NAME
+		subl $ROUT
+	fi
+
+
+
+}
+
+
+
+##### Main
+echo "Running Main Program"
+
+genFiles;
+
+echo "Finished"

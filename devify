@@ -1,0 +1,97 @@
+#!/bin/bash
+
+## To replace all occurrences of "day" with "night" within file.txt:
+#sed -i 's/day/night/g' file.txt
+
+#~% FILE="example.tar.gz"
+#~% echo "${FILE%%.*}"
+#example
+#~% echo "${FILE%.*}"
+#example.tar
+#~% echo "${FILE#*.}"
+#tar.gz
+#~% echo "${FILE##*.}"
+#gz
+
+
+function getFileName() {
+	local file=$1
+	local result="${file%%.*}"
+	echo "$result"
+}
+
+function getFileExt() {
+	local file=$1
+	local result="${file##*.}"
+	echo "$result"
+}
+
+
+
+TAG="\/\/\[DEV\]"
+
+
+if [[ $# -eq 0 ]]; then
+	echo "Missing arguments, use '-h' or '--help'"
+	exit 1
+fi
+
+while [[ $# -gt 0 ]] 
+do
+key="$1"
+
+	case $key in
+		-h|--help)
+			echo "Usage: devify 'filepath'"
+			echo "Removes '//[DEV] ' tag in code and outputs a 'name'.dev file"
+			echo "Optional tags (todo) :"
+			echo "  -b | --backslash          remove with '//' comments"
+			echo "  -m | --minus              remove with '--' comments"
+			echo "  -t | --tag      'X'       uses 'X' as the tag to be deleted"
+			echo "  -o | --output   'X'       uses 'X' as the output path/filename"
+			echo ""
+			shift
+			;;
+		-m|--minus)
+			#force minus removal
+			TAG="--[DEV]"
+			shift
+			;;
+		-b|--backslash)
+			#force backslash removal
+			TAG="//[DEV]"
+			shift
+			;;
+		-t|--tag)
+			TAG="$2"
+			shift
+			shift
+			;;
+		-o|--output)
+			OUT="$2"
+			shift
+			shift
+			;;
+		*)
+			FILE="$1"
+			D=$( dirname "$FILE")
+			F=$( basename "$FILE")
+			STAG="s/$TAG//g"
+
+			EXT=$(getFileExt $F)
+			if [[ -z "$OUT" ]]; then
+				NAME="DEV$(getFileName $F)$EXT"
+			else
+				NAME="$OUT"
+			fi
+
+
+			cp "$FILE" "$D/$NAME"
+			sed -i "$STAG" "$D/$NAME"
+			shift
+			;;
+	esac
+done
+
+
+exit 0

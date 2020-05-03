@@ -1,0 +1,87 @@
+#!/bin/bash
+
+
+# reminder--An easy command line-based reminder pad
+reminderfile="$HOME/.reminder"
+
+
+if [ $# -eq 0 ] ; then
+	#Display file
+
+	#Check to see if there is a file
+	if [ ! -f $reminderfile ] ; then
+		echo "$0: No reminder file found" >&2
+		echo "Use reminder -a to add reminders" >&2
+		exit
+	else
+		#Display the whole reminderfile when not given any search criteria.
+        printf "\n"
+		echo -ne $(cat $reminderfile | sed  's/$/\\n/' | sed 's/ /\\a /g')
+        printf "\n"
+	fi
+
+else
+
+	while test $# -gt 0; do
+
+        case "$1" in
+
+                -h|--help)
+                        echo "reminder usage:"
+                        echo " "
+                    	echo "-n                        prompts creation of a note"
+                    	echo "--add  \"string\"           appends a string to the notes"
+                    	echo "-f  \"string\"              searches for a string in the notes"
+                        echo "-h, --help                shows this help message"
+                        echo "-e                        edit file"   
+                        exit 0
+                        ;;
+
+                -a|--add)
+                        shift
+                        if test $# -gt 0; then
+
+                            echo "$1" >> $reminderfile 
+                            echo "Note succesfully added"
+                            exit 0
+                        else
+
+                            echo "No note specified"
+                            exit 1
+                        fi
+                        shift
+                        ;;
+
+                -f)
+                        shift
+                        if test $# -gt 0; then
+                            grep -i -- "$1" $reminderfile | ${PAGER:-more}
+                            exit 0
+                        else
+                            echo "No search term specified"
+                            exit 1
+                        fi
+                        shift
+                        ;;
+
+                -n)
+                        echo "Enter note, end with ^D: " 
+                        cat - >> $reminderfile
+                        echo "Note succesfully added"
+                        exit 0
+                        ;;
+
+                -e)
+                        subl $reminderfile
+                        exit 0
+                        ;;
+
+                *)
+                        break
+                        ;;
+        esac
+done
+
+fi
+
+exit 0

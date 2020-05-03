@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]] ; then
+    echo ""
+    curl "wttr.in/Cholua?1?q"
+    echo ""
+elif [[ "$1" -eq "moon" ]] ; then
+    echo ""
+	curl "wttr.in/moon?q"
+    echo ""
+else
+    echo ""
+	curl wttr.in/"$1"
+    echo ""
+fi

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#KDE color profile path
+PYWALL="${HOME}/.local/share/color-schemes/Pywal.colors"
+
+if [ -z "$1" ]; then
+	if [ -z "$WALLPAPER_DIR" ]; then
+		echo "WALLPAPER_DIR config not set in .bashrc"
+		return
+	else
+		WALL=$WALLPAPER_DIR
+	fi
+else
+	WALL=$1
+fi
+
+
+# Backends:
+#  - colorz
+#  - wal
+#  - colorthief
+#  - schemer2
+#  - haishoku
+wal -q -n --backend schemer2 -i $WALL
+
+# Link wallpaper to cache
+if [ -n "${HOME}/.cache/wal/wallpaper" ]; then
+	rm "${HOME}/.cache/wal/wallpaper"
+fi
+ln -s "$(< "${HOME}/.cache/wal/wal")" "${HOME}/.cache/wal/wallpaper"
+
+# Update wallpaper
+# wallpaper "$(< "${HOME}/.cache/wal/wal")"
+wallpaper "${HOME}/.cache/wal/wallpaper"
+
+# Test
+# wal --backend schemer2 -i "$WALLPAPER_DIR" ; wallpaper "$(< "${HOME}/.cache/wal/wal")"
+
+
+# Update KDE Plasma
+lookandfeeltool -a 'pywal'
+
+# Update Firefox
+~/Pywalfox/daemon/pywalfox.py update
